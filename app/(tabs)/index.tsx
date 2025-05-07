@@ -1,16 +1,29 @@
-import { useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-import { usePosts } from '@/hooks/usePosts';
-import { SearchBar } from '@/components/SearchBar';
-import { PostCard } from '@/components/PostCard';
+import { useCallback, useState } from "react";
+import { FlatList, StyleSheet, Text, View } from "react-native";
+import { useFocusEffect, useRouter } from "expo-router";
+import { usePosts } from "@/hooks/usePosts";
+import { SearchBar } from "@/components/SearchBar";
+import { PostCard } from "@/components/PostCard";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { posts, isLoading, error } = usePosts();
-  const [searchQuery, setSearchQuery] = useState('');
+  const { posts, isLoading, error, refetch } = usePosts();
+  const [searchQuery, setSearchQuery] = useState("");
 
-  const filteredPosts = posts.filter(post => {
+  useFocusEffect(
+    useCallback(() => {
+      const loadPosts = async () => {
+        try {
+          await refetch();
+        } catch (err) {
+          console.error("Failed to fetch posts:", err);
+        }
+      };
+      loadPosts();
+    }, []), // Remove refetch from dependencies
+  );
+
+  const filteredPosts = posts.filter((post) => {
     const query = searchQuery.toLowerCase();
     return (
       post.title.toLowerCase().includes(query) ||
@@ -60,24 +73,24 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   list: {
     padding: 16,
   },
   error: {
-    color: '#ff3b30',
-    textAlign: 'center',
+    color: "#ff3b30",
+    textAlign: "center",
     marginTop: 20,
   },
   emptyContainer: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 32,
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
 });
