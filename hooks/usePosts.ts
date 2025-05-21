@@ -1,91 +1,105 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  createPosts,
+  deletePosts,
+  getPosts,
+  updatePosts,
+} from "@/app/api/index";
 
 interface Post {
   id: string;
   title: string;
   content: string;
   authorId: string;
-  authorName: string;
+  author: string;
   createdAt: string;
 }
+
+// Create a shared fetchPosts function
+const fetchPosts = async () => {
+  return await getPosts();
+};
 
 export function usePosts() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+  // useEffect(() => {
+  //   getPosts();
+  // }, []);
 
-  const fetchPosts = async () => {
+  const getPosts = async () => {
     try {
-      // Simulated API response
-      const mockPosts = [
-        {
-          id: '1',
-          title: 'Introduction to React Native',
-          content: 'Learn the basics of React Native development...',
-          authorId: '1',
-          authorName: 'Admin Teacher',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          title: 'Advanced JavaScript Concepts',
-          content: 'Deep dive into JavaScript concepts...',
-          authorId: '1',
-          authorName: 'Admin Teacher',
-          createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-        },
-        {
-          id: '3',
-          title: 'Web Development Fundamentals',
-          content: 'Understanding the basics of web development...',
-          authorId: '2',
-          authorName: 'Demo Student',
-          createdAt: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-        },
-      ];
-      
-      setPosts(mockPosts);
-      setIsLoading(false);
+      setIsLoading(true);
+      setError(null);
+      const data = await fetchPosts();
+      setPosts(data);
     } catch (err) {
-      setError('Failed to fetch posts');
+      setError("Failed to fetch posts");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updatePost = async (post: Post, postId: string) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const updatedPost = await updatePosts(post, postId);
+      setPosts((prevPosts) =>
+        prevPosts.map((p) => (p.id === postId ? updatedPost.data : p))
+      );
+    } catch (err) {
+      setError("Failed to update post");
+      throw err;
+    } finally {
       setIsLoading(false);
     }
   };
 
   const deletePost = async (postId: string) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setPosts(current => current.filter(post => post.id !== postId));
+      setIsLoading(true);
+      setError(null);
+      deletePosts(postId);
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
     } catch (err) {
-      setError('Failed to delete post');
+      setError("Failed to delete post");
       throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return { posts, isLoading, error, deletePost };
+  return {
+    posts,
+    isLoading,
+    error,
+    deletePost,
+    refetch: getPosts,
+    updatePost,
+  };
 }
 
 export function useCreatePost() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createPost = async (post: Omit<Post, 'id' | 'createdAt' | 'authorName'>) => {
-    setIsLoading(true);
-    setError(null);
-
+  const createPost = async (post: Omit<Post, "id" | "createdAt">) => {
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setIsLoading(false);
+      setIsLoading(true);
+      setError(null);
+
+      await createPosts(post);
+
+      await fetchPosts();
     } catch (err) {
-      setError('Failed to create post');
-      setIsLoading(false);
+      setError("Failed to create post");
       throw err;
+    } finally {
+      setIsLoading(false);
     }
   };
 
