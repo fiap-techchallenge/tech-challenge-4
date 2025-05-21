@@ -16,11 +16,13 @@ import {
   getStudents,
   getTeachers,
 } from "@/app/api/index";
+import React from "react";
 
 interface User {
   id: string;
   name: string;
   email: string;
+  userType: "student" | "teacher";
   role: "student" | "teacher";
 }
 
@@ -37,8 +39,17 @@ export default function UsersScreen() {
       const loadUsers = async () => {
         try {
           setIsLoading(true);
-          const data =
-            await (user?.role === "teacher" ? getTeachers() : getStudents());
+          console.log("my role", user?.role);
+          let data: User[] = [];
+          if (user?.role === "teacher") {
+            data = await getTeachers();
+            setUsers(data);
+          }
+          if (user?.role === "student") {
+            data = await getStudents();
+            setUsers(data);
+          }
+          data.filter((item: User) => item.id !== user?.id);
           // Add role to each user based on the endpoint called
           const usersWithRole = data.map((user: any) => ({
             ...user,
@@ -64,24 +75,23 @@ export default function UsersScreen() {
   };
 
   const handleDelete = async () => {
-    if (selectedUser) {
-      try {
-        setIsLoading(true);
-
-        if (selectedUser.role === "teacher") {
-          await deleteTeacher(selectedUser.id);
-        } else {
-          await deleteStudent(selectedUser.id);
-        }
-        setUsers((prevUsers) =>
-          prevUsers.filter((user) => user.id !== selectedUser.id)
-        );
-      } catch (error) {
-        console.error("Failed to delete user:", error);
+    console.log("Deleting user:", selectedUser);
+    try {
+      console.log(selectedUser.userType);
+      setIsLoading(true);
+      if (selectedUser.userType == "teacher") {
+        await deleteTeacher(selectedUser.id);
+      } else if (selectedUser.userType == "student") {
+        await deleteStudent(selectedUser.id);
       }
-      setDeleteModalVisible(false);
-      setSelectedUser(null);
+      setUsers((prevUsers) =>
+        prevUsers.filter((user) => user.id !== selectedUser.id)
+      );
+    } catch (error) {
+      console.error("Failed to delete user:", error);
     }
+    setDeleteModalVisible(false);
+    setSelectedUser(null);
   };
 
   const renderUser = ({ item }: { item: User }) => (

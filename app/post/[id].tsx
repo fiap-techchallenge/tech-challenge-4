@@ -12,6 +12,7 @@ import { useAuth } from "@/context/auth";
 import { ArrowLeft, Pencil, Save, Trash2, X } from "lucide-react-native";
 import { postInfo } from "@/app/api/index";
 import { usePosts } from "@/hooks/usePosts";
+import React from "react";
 
 export interface Post {
   id: string;
@@ -32,7 +33,7 @@ export default function PostScreen() {
   const [editedContent, setEditedContent] = useState("");
   const [editedAuthorName, setEditedAuthorName] = useState("");
   const [error, setError] = useState("");
-  const { updatePost } = usePosts();
+  const { updatePost, deletePost } = usePosts();
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -98,8 +99,11 @@ export default function PostScreen() {
 
   const handleDelete = async () => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (!post) {
+        setError("Postagem não encontrada");
+        return;
+      }
+      await deletePost(post?.id);
       router.back();
     } catch (err) {
       setError("Falha ao excluir postagem");
@@ -115,8 +119,7 @@ export default function PostScreen() {
   }
 
   const isTeacher = user?.role === "teacher";
-  const isAuthor = user?.name === post.author;
-  const canEdit = isTeacher && isAuthor;
+  const canEdit = isTeacher;
 
   return (
     <ScrollView style={styles.container}>

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { updateTeacher } from "@/app/api";
+import React from "react";
 
 export default function EditTeacherScreen() {
   const params = useLocalSearchParams();

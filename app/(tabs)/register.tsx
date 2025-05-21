@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/auth";
+import React from "react";
 
 type UserRole = "student" | "teacher";
 

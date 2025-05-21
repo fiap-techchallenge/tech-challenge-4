@@ -11,6 +11,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { usePosts } from "@/hooks/usePosts";
 import { useAuth } from "@/context/auth";
 import { ArrowUpDown } from "lucide-react-native";
+import React from "react";
 
 type SortField = "date" | "title" | "author";
 type SortOrder = "asc" | "desc";
@@ -149,7 +150,7 @@ export default function MyPostsScreen() {
             onPress={() => router.push(`/post/${item.id}`)}
           >
             <Text style={styles.postTitle}>{item.title}</Text>
-            <Text style={styles.postAuthor}>Por {item.authorName}</Text>
+            <Text style={styles.postAuthor}>Por {item.author}</Text>
             <Text style={styles.postDate}>
               {new Date(item.createdAt).toLocaleDateString()}
             </Text>

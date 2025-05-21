@@ -4,6 +4,7 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { usePosts } from "@/hooks/usePosts";
 import { SearchBar } from "@/components/SearchBar";
 import { PostCard } from "@/components/PostCard";
+import React from "react";
 
 export default function HomeScreen() {
   const router = useRouter();

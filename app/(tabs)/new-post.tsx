@@ -10,6 +10,7 @@ import {
 import { useRouter } from "expo-router";
 import { useAuth } from "@/context/auth";
 import { useCreatePost, usePosts } from "@/hooks/usePosts";
+import React from "react";
 
 export default function NewPostScreen() {
   const [title, setTitle] = useState("");
@@ -27,12 +28,14 @@ export default function NewPostScreen() {
     }
 
     try {
-      await createPost({
-        title,
-        content,
-        authorId: user?.id,
-        author: user?.name,
-      });
+      if (user) {
+        await createPost({
+          title,
+          content,
+          authorId: user.id,
+          author: user.name ?? "",
+        });
+      }
       await refetch();
       router.back();
     } catch (err) {

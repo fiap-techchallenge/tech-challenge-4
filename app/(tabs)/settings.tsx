@@ -1,6 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAuth } from '@/context/auth';
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useAuth } from "@/context/auth";
+import React from "react";
 
 export default function SettingsScreen() {
   const router = useRouter();
@@ -8,7 +9,7 @@ export default function SettingsScreen() {
 
   const handleSignOut = async () => {
     await signOut();
-    router.replace('/login');
+    router.replace("/login");
   };
 
   return (
@@ -29,30 +30,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   profile: {
     marginBottom: 32,
   },
   email: {
     fontSize: 20,
-    fontWeight: '600',
-    color: '#1a1a1a',
+    fontWeight: "600",
+    color: "#1a1a1a",
     marginBottom: 4,
   },
   role: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   button: {
-    backgroundColor: '#ff3b30',
+    backgroundColor: "#ff3b30",
     padding: 16,
     borderRadius: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

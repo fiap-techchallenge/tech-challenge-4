@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter, useSegments } from "expo-router";
 import { login } from "@/app/api/index";
 import axios from "axios";
+import React from "react";
 
 interface User {
   id: string;
